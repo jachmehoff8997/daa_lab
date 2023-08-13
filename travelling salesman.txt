@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define N 4 // Number of cities
+
+int graph[N][N] = {
+    {0, 10, 15, 20},
+    {10, 0, 35, 25},
+    {15, 35, 0, 30},
+    {20, 25, 30, 0}
+};
+
+int minCost = _INT_MAX_;
+bool visited[N] = {false};
+
+void branchAndBound(int currentCity, int cost, int level) {
+    if (level == N - 1) {
+        if (graph[currentCity][0] != 0) {
+            int totalCost = cost + graph[currentCity][0];
+            if (totalCost < minCost) {
+                minCost = totalCost;
+            }
+        }
+        return;
+    }
+
+    visited[currentCity] = true;
+
+    for (int nextCity = 0; nextCity < N; ++nextCity) {
+        if (!visited[nextCity] && graph[currentCity][nextCity] != 0) {
+            branchAndBound(nextCity, cost + graph[currentCity][nextCity], level + 1);
+        }
+    }
+
+    visited[currentCity] = false;
+}
+
+int main() {
+    branchAndBound(0, 0, 0);
+
+    printf("Minimum cost for TSP: %d\n", minCost);
+
+    return 0;
+}
